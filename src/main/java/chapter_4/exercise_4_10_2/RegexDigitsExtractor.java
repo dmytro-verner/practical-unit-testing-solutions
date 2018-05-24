@@ -1,4 +1,4 @@
-package chapter_4.task_4_10_2;
+package chapter_4.exercise_4_10_2;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package chapter_3.task_3_11_2;
+package chapter_3.exercise_3_11_2;
 
 public class StringUtil {
     public static String reverse(String s) {

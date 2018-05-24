@@ -1,4 +1,4 @@
-package chapter_4.task_4_10_2;
+package chapter_4.exercise_4_10_2;
 
 import junitparams.JUnitParamsRunner;
 import org.junit.Assert;

@@ -1,4 +1,4 @@
-package chapter_4.task_4_10_3;
+package chapter_4.exercise_4_10_3;
 
 import java.time.LocalTime;
 import java.util.ArrayList;

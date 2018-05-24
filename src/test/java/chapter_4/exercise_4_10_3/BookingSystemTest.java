@@ -1,4 +1,4 @@
-package chapter_4.task_4_10_3;
+package chapter_4.exercise_4_10_3;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -61,11 +61,11 @@ public class BookingSystemTest {
                 },
                 new Object[] {
                         LocalTime.of(4, 0), 2,
-                        LocalTime.of(5,0), 2
+                        LocalTime.of(5, 0), 2
                 },
                 new Object[] {
                         LocalTime.of(5, 0), 2,
-                        LocalTime.of(4,0), 2
+                        LocalTime.of(4, 0), 2
                 }
         };
     }

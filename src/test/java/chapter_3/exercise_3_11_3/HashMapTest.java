@@ -1,4 +1,4 @@
-package chapter_3.task_3_11_3;
+package chapter_3.exercise_3_11_3;
 
 import org.junit.Assert;
 import org.junit.Test;

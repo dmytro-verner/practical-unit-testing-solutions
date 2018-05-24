@@ -1,4 +1,4 @@
-package chapter_4.task_4_10_1;
+package chapter_4.exercise_4_10_1;
 
 public class PasswordValidator {
 
