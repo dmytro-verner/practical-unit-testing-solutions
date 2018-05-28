@@ -3,6 +3,7 @@ package chapter_5.package_5_7_3;
 import chapter_5.exercise_5_7_3.AdvancedBookingSystem;
 import chapter_5.exercise_5_7_3.Classroom;
 import chapter_5.exercise_5_7_3.DayOfWeekHour;
+import chapter_5.exercise_5_7_3.Equipment;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Assert;
@@ -128,7 +129,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwIAEOnDoubleBookingNow(){
+    public void throwIAEOnDoubleBooking(){
         Classroom classroom1 = mock(Classroom.class);
         when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom1.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
@@ -153,5 +154,115 @@ public class AdvancedBookingSystemTests {
 
         bookingSystem.book("C1");
         bookingSystem.book("C2");
+    }
+
+    @Test
+    public void returnsAllClassroomsWithProjectorAndCapacity(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+        Classroom classroom3 = mock(Classroom.class);
+
+        when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, false);
+                put(Equipment.WI_FI, true);
+            }
+        });
+        when(classroom1.getCapacity()).thenReturn(20);
+        when(classroom1.getClassroomId()).thenReturn("C1");
+
+        when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, true);
+                put(Equipment.WI_FI, false);
+            }
+        });
+        when(classroom2.getCapacity()).thenReturn(25);
+        when(classroom2.getClassroomId()).thenReturn("C2");
+
+        when(classroom3.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, true);
+                put(Equipment.WI_FI, false);
+            }
+        });
+        when(classroom3.getCapacity()).thenReturn(19);
+        when(classroom3.getClassroomId()).thenReturn("C3");
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
+                .collect(Collectors.toSet()));
+
+        List<Classroom> allAvailableClassrooms = bookingSystem.getAllAvailableClassrooms(20, Collections.singletonList(Equipment.PROJECTOR));
+
+        Assert.assertEquals(1, allAvailableClassrooms.size());
+        Assert.assertEquals("C2", allAvailableClassrooms.get(0).getClassroomId());
+    }
+
+    @Test
+    public void returnsAllClassroomsWithProjectorAndWiFiAndCapacity(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+
+        when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, false);
+                put(Equipment.WI_FI, true);
+            }
+        });
+        when(classroom1.getCapacity()).thenReturn(20);
+        when(classroom1.getClassroomId()).thenReturn("C1");
+
+        when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, true);
+                put(Equipment.WI_FI, true);
+            }
+        });
+        when(classroom2.getCapacity()).thenReturn(20);
+        when(classroom2.getClassroomId()).thenReturn("C2");
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
+                .collect(Collectors.toSet()));
+
+        List<Classroom> allAvailableClassrooms = bookingSystem.getAllAvailableClassrooms(20, Arrays.asList(Equipment.PROJECTOR, Equipment.WI_FI));
+
+        Assert.assertEquals(1, allAvailableClassrooms.size());
+        Assert.assertEquals("C2", allAvailableClassrooms.get(0).getClassroomId());
+    }
+
+    @Test
+    public void returnsAllClassroomsWithCapacityAndNoRequirementsForEquipment(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+
+        when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, false);
+                put(Equipment.WI_FI, true);
+            }
+        });
+        when(classroom1.getCapacity()).thenReturn(19);
+        when(classroom1.getClassroomId()).thenReturn("C1");
+
+        when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, true);
+                put(Equipment.WI_FI, false);
+            }
+        });
+        when(classroom2.getCapacity()).thenReturn(20);
+        when(classroom2.getClassroomId()).thenReturn("C2");
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
+                .collect(Collectors.toSet()));
+
+        List<Classroom> allAvailableClassrooms = bookingSystem.getAllAvailableClassrooms(20, Collections.emptyList());
+
+        Assert.assertEquals(1, allAvailableClassrooms.size());
+        Assert.assertEquals("C2", allAvailableClassrooms.get(0).getClassroomId());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsIAEOnNull(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
+                .collect(Collectors.toSet()));
+
+        bookingSystem.getAllAvailableClassrooms(20, null);
     }
 }

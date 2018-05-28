@@ -34,6 +34,25 @@ public class AdvancedBookingSystem {
                 .collect(Collectors.toList());
     }
 
+    public List<Classroom> getAllAvailableClassrooms(int capacity, List<Equipment> equipmentList) {
+        return getAllAvailableClassrooms(DayOfWeekHour.now(), capacity, equipmentList);
+    }
+
+    public List<Classroom> getAllAvailableClassrooms(DayOfWeekHour dayOfWeekHour, int minimumCapacity, List<Equipment> equipmentList) {
+        if(equipmentList == null)
+            throw new IllegalArgumentException("Equipment list shouldn't be null");
+
+        return classrooms.stream()
+                .filter(c -> c.getCapacity() >= minimumCapacity &&
+                    equipmentList.stream().allMatch(e -> c.getEquipmentAvailability().get(e))
+                )
+                .filter(c -> c.getBookedDateTimeList()
+                                .stream()
+                                .noneMatch(b -> b.getDayOfWeek().equals(
+                                        dayOfWeekHour.getDayOfWeek()) && b.getHour() == dayOfWeekHour.getHour()))
+                .collect(Collectors.toList());
+    }
+
     public void book(String classroomId) {
         Classroom classroom = classrooms.stream()
                 .filter(c -> c.getClassroomId().equals(classroomId))
