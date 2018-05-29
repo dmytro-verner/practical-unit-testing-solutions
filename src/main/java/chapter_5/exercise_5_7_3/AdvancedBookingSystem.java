@@ -42,6 +42,10 @@ public class AdvancedBookingSystem {
         if(equipmentList == null)
             throw new IllegalArgumentException("Equipment list shouldn't be null");
 
+        if(minimumCapacity <= 0) {
+            throw new IllegalArgumentException("Minimum capacity: " + minimumCapacity + " is less than 1");
+        }
+
         return classrooms.stream()
                 .filter(c -> c.getCapacity() >= minimumCapacity &&
                     equipmentList.stream().allMatch(e -> c.getEquipmentAvailability().get(e))

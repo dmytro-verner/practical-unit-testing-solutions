@@ -153,7 +153,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test
-    public void returnsAllClassroomsWithProjector(){
+    public void returnsAllAvailableClassroomsWithProjector(){
         Classroom classroom1 = mock(Classroom.class);
         Classroom classroom2 = mock(Classroom.class);
         Classroom classroom3 = mock(Classroom.class);
@@ -192,7 +192,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test
-    public void returnsAllClassroomsWithProjectorAndWiFi(){
+    public void returnsAllAvailableClassroomsWithProjectorAndWiFi(){
         Classroom classroom1 = mock(Classroom.class);
         Classroom classroom2 = mock(Classroom.class);
 
@@ -222,7 +222,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test
-    public void returnsAllClassroomsWithNoRequirementsForEquipment(){
+    public void returnsAllAvailableClassroomsWithNoRequirementsForEquipment(){
         Classroom classroom1 = mock(Classroom.class);
         Classroom classroom2 = mock(Classroom.class);
 
@@ -251,7 +251,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test
-    public void returnsAllClassroomsWithCapacityEqualOrAbove(){
+    public void returnsAllAvailableClassroomsWithCapacityEqualOrAbove(){
         Classroom classroom1 = mock(Classroom.class);
         Classroom classroom2 = mock(Classroom.class);
 
@@ -265,6 +265,60 @@ public class AdvancedBookingSystemTests {
                 .collect(Collectors.toSet()));
 
         List<Classroom> allAvailableClassrooms = bookingSystem.getAllAvailableClassrooms(20, Collections.emptyList());
+
+        Assert.assertEquals(1, allAvailableClassrooms.size());
+        Assert.assertEquals("C2", allAvailableClassrooms.get(0).getClassroomId());
+    }
+
+    private static Object[] classroomsCapacityLessThanOne(){
+        return new Object[] {
+                new Object[] {0},
+                new Object[] {-1}
+        };
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @Parameters(method = "classroomsCapacityLessThanOne")
+    public void throwsIAEOnGettingAvailableClassroomsWithCapacityLowerThanOne(int capacity){
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Collections.emptySet());
+
+        bookingSystem.getAllAvailableClassrooms(capacity, Collections.emptyList());
+    }
+
+    @Test
+    public void returnsAllAvailableClassroomsWithProjectorAndCapacityEqualOrAbove(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+        Classroom classroom3 = mock(Classroom.class);
+
+        when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, true);
+                put(Equipment.WI_FI, true);
+            }
+        });
+        when(classroom1.getCapacity()).thenReturn(19);
+        when(classroom1.getClassroomId()).thenReturn("C1");
+
+        when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, true);
+                put(Equipment.WI_FI, false);
+            }
+        });
+        when(classroom2.getCapacity()).thenReturn(20);
+        when(classroom2.getClassroomId()).thenReturn("C2");
+
+        when(classroom3.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+            put(Equipment.PROJECTOR, false);
+            put(Equipment.WI_FI, false);
+        }
+        });
+        when(classroom3.getCapacity()).thenReturn(20);
+        when(classroom3.getClassroomId()).thenReturn("C3");
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
+                .collect(Collectors.toSet()));
+
+        List<Classroom> allAvailableClassrooms = bookingSystem.getAllAvailableClassrooms(20, Collections.singletonList(Equipment.PROJECTOR));
 
         Assert.assertEquals(1, allAvailableClassrooms.size());
         Assert.assertEquals("C2", allAvailableClassrooms.get(0).getClassroomId());
