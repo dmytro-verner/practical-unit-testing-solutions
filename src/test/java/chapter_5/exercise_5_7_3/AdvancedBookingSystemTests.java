@@ -1,9 +1,5 @@
-package chapter_5.package_5_7_3;
+package chapter_5.exercise_5_7_3;
 
-import chapter_5.exercise_5_7_3.AdvancedBookingSystem;
-import chapter_5.exercise_5_7_3.Classroom;
-import chapter_5.exercise_5_7_3.DayOfWeekHour;
-import chapter_5.exercise_5_7_3.Equipment;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Assert;
@@ -157,7 +153,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test
-    public void returnsAllClassroomsWithProjectorAndCapacity(){
+    public void returnsAllClassroomsWithProjector(){
         Classroom classroom1 = mock(Classroom.class);
         Classroom classroom2 = mock(Classroom.class);
         Classroom classroom3 = mock(Classroom.class);
@@ -167,7 +163,7 @@ public class AdvancedBookingSystemTests {
                 put(Equipment.WI_FI, true);
             }
         });
-        when(classroom1.getCapacity()).thenReturn(20);
+        when(classroom1.getCapacity()).thenReturn(25);
         when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
@@ -196,7 +192,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test
-    public void returnsAllClassroomsWithProjectorAndWiFiAndCapacity(){
+    public void returnsAllClassroomsWithProjectorAndWiFi(){
         Classroom classroom1 = mock(Classroom.class);
         Classroom classroom2 = mock(Classroom.class);
 
@@ -205,7 +201,7 @@ public class AdvancedBookingSystemTests {
                 put(Equipment.WI_FI, true);
             }
         });
-        when(classroom1.getCapacity()).thenReturn(20);
+        when(classroom1.getCapacity()).thenReturn(25);
         when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
@@ -213,7 +209,7 @@ public class AdvancedBookingSystemTests {
                 put(Equipment.WI_FI, true);
             }
         });
-        when(classroom2.getCapacity()).thenReturn(20);
+        when(classroom2.getCapacity()).thenReturn(25);
         when(classroom2.getClassroomId()).thenReturn("C2");
 
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
@@ -226,7 +222,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test
-    public void returnsAllClassroomsWithCapacityAndNoRequirementsForEquipment(){
+    public void returnsAllClassroomsWithNoRequirementsForEquipment(){
         Classroom classroom1 = mock(Classroom.class);
         Classroom classroom2 = mock(Classroom.class);
 
@@ -235,7 +231,7 @@ public class AdvancedBookingSystemTests {
                 put(Equipment.WI_FI, true);
             }
         });
-        when(classroom1.getCapacity()).thenReturn(19);
+        when(classroom1.getCapacity()).thenReturn(25);
         when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
@@ -243,6 +239,25 @@ public class AdvancedBookingSystemTests {
                 put(Equipment.WI_FI, false);
             }
         });
+        when(classroom2.getCapacity()).thenReturn(25);
+        when(classroom2.getClassroomId()).thenReturn("C2");
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
+                .collect(Collectors.toSet()));
+
+        List<Classroom> allAvailableClassrooms = bookingSystem.getAllAvailableClassrooms(20, Collections.emptyList());
+
+        Assert.assertEquals(2, allAvailableClassrooms.size());
+    }
+
+    @Test
+    public void returnsAllClassroomsWithCapacityEqualOrAbove(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+
+        when(classroom1.getCapacity()).thenReturn(19);
+        when(classroom1.getClassroomId()).thenReturn("C1");
+
         when(classroom2.getCapacity()).thenReturn(20);
         when(classroom2.getClassroomId()).thenReturn("C2");
 
@@ -256,7 +271,7 @@ public class AdvancedBookingSystemTests {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsIAEOnNull(){
+    public void throwsIAEOnNullEquipmentList(){
         Classroom classroom1 = mock(Classroom.class);
         Classroom classroom2 = mock(Classroom.class);
 
