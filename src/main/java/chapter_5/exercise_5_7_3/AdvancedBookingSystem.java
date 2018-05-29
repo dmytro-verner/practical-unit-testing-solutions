@@ -63,6 +63,28 @@ public class AdvancedBookingSystem {
                 .findAny()
                 .orElseThrow(IllegalArgumentException::new);
 
+        setClassroomBookingStatus(classroom);
+    }
+
+    public void book(int minimumCapacity, List<Equipment> equipmentList) {
+        if(minimumCapacity <= 0)
+            throw new IllegalArgumentException("Minimum capacity " + minimumCapacity + " shouldn't less than 1");
+
+        Classroom bookableClassroom = classrooms.stream()
+                .filter(c -> c.getCapacity() >= minimumCapacity &&
+                        equipmentList.stream().allMatch(e -> c.getEquipmentAvailability().get(e))
+                )
+                .filter(c -> c.getBookedDateTimeList()
+                        .stream()
+                        .noneMatch(b -> b.getDayOfWeek().equals(
+                                DayOfWeekHour.now().getDayOfWeek()) && b.getHour() == DayOfWeekHour.now().getHour()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No available classroom with these requirements"));
+
+        setClassroomBookingStatus(bookableClassroom);
+    }
+
+    private void setClassroomBookingStatus(Classroom classroom){
         if(classroom.isDayOfWeekTimeAvailable(DayOfWeekHour.now()))
             classroom.setBookDateTime(DayOfWeekHour.of(LocalDateTime.now().getDayOfWeek(), LocalTime.now().getHour()));
         else

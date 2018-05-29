@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(JUnitParamsRunner.class)
@@ -333,5 +334,102 @@ public class AdvancedBookingSystemTests {
                 .collect(Collectors.toSet()));
 
         bookingSystem.getAllAvailableClassrooms(20, null);
+    }
+
+    @Test
+    public void bookClassroomWithCapacityEqualOrMore(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+        when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, true);
+                put(Equipment.WI_FI, true);
+            }
+        });
+        when(classroom1.getCapacity()).thenReturn(19);
+
+        when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+                put(Equipment.PROJECTOR, true);
+                put(Equipment.WI_FI, false);
+            }
+        });
+        when(classroom2.getCapacity()).thenReturn(20);
+        when(classroom2.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
+                .collect(Collectors.toSet()));
+
+        bookingSystem.book(20, Collections.emptyList());
+        when(classroom2.getBookedDateTimeList()).thenReturn(Collections.singletonList(DayOfWeekHour.now()));
+
+        verify(classroom2).setBookDateTime(DayOfWeekHour.now());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    @Parameters(method = "classroomsCapacityLessThanOne")
+    public void bookingWithZeroOrLessCapacityThrowsIAE(int minimumCapacity){
+        Classroom classroom1 = mock(Classroom.class);
+
+        new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet())).book(minimumCapacity, Collections.emptyList());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void bookingWithNoExistingClassroomsThrowsIAE(){
+        new AdvancedBookingSystem(Collections.EMPTY_SET).book(20, Collections.emptyList());
+    }
+
+    @Test
+    public void bookClassroomWithProjector(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+        when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+            put(Equipment.PROJECTOR, true);
+            put(Equipment.WI_FI, true);
+        }
+        });
+        when(classroom1.getCapacity()).thenReturn(20);
+        when(classroom1.getClassroomId()).thenReturn("C1");
+        when(classroom1.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
+
+        when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+            put(Equipment.PROJECTOR, false);
+            put(Equipment.WI_FI, false);
+        }
+        });
+        when(classroom2.getCapacity()).thenReturn(20);
+        when(classroom2.getClassroomId()).thenReturn("C2");
+        when(classroom2.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2).collect(Collectors.toSet()));
+        bookingSystem.book(10, Collections.singletonList(Equipment.PROJECTOR));
+        when(classroom1.getBookedDateTimeList()).thenReturn(Collections.singletonList(DayOfWeekHour.now()));
+
+        verify(classroom1).setBookDateTime(DayOfWeekHour.now());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void throwsIAEOnDoubleBookingWhenOnlyOneAvailableClassroomWithSpecificCapacityAndProjector(){
+        Classroom classroom1 = mock(Classroom.class);
+        Classroom classroom2 = mock(Classroom.class);
+        when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+            put(Equipment.PROJECTOR, false);
+            put(Equipment.WI_FI, true);
+        }
+        });
+        when(classroom1.getCapacity()).thenReturn(20);
+        when(classroom1.getClassroomId()).thenReturn("C1");
+
+        when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
+            put(Equipment.PROJECTOR, true);
+            put(Equipment.WI_FI, false);
+        }
+        });
+        when(classroom2.getCapacity()).thenReturn(20);
+        when(classroom2.getClassroomId()).thenReturn("C2");
+
+        AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2).collect(Collectors.toSet()));
+        bookingSystem.book(20, Collections.singletonList(Equipment.PROJECTOR));
+        when(classroom2.getBookedDateTimeList()).thenReturn(Collections.singletonList(DayOfWeekHour.now()));
+
+        bookingSystem.book(20, Collections.singletonList(Equipment.PROJECTOR));
     }
 }
