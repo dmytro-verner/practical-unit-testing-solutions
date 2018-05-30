@@ -19,6 +19,10 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnitParamsRunner.class)
 public class AdvancedBookingSystemTests {
 
+    private Classroom classroom1 = mock(Classroom.class);
+    private Classroom classroom2 = mock(Classroom.class);
+    private Classroom classroom3 = mock(Classroom.class);
+
     @Test
     public void returnNoExistingClassroomsWhenClassroomListEmpty(){
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem();
@@ -54,8 +58,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void returnExistingClassroomsWhenThereAreClassroomsInList(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
         when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom2.getClassroomId()).thenReturn("C2");
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2).collect(Collectors.toSet()));
@@ -67,7 +69,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void listsAvailableNowClassroomWhenOneInListAndAvailable(){
-        Classroom classroom1 = mock(Classroom.class);
         when(classroom1.getClassroomId()).thenReturn("C1");
 
         AdvancedBookingSystem advancedBookingSystem = new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet()));
@@ -79,7 +80,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void listsNoAvailableNowClassroomsWhenOneInListAndBooked(){
-        Classroom classroom1 = mock(Classroom.class);
         when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom1.getBookedDateTimeList()).thenReturn(Collections.singletonList(DayOfWeekHour.now()));
 
@@ -101,10 +101,6 @@ public class AdvancedBookingSystemTests {
     @Test
     @Parameters(method = "dateTimes")
     public void listsAvailableInPastAndFutureClassroomsWhenThereAreBookedAndAvailableOnes(DayOfWeekHour dayOfWeekHour){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
-        Classroom classroom3 = mock(Classroom.class);
-
         when(classroom1.getBookedDateTimeList()).thenReturn(Collections.singletonList(dayOfWeekHour));
 
         AdvancedBookingSystem advancedBookingSystem = new AdvancedBookingSystem(
@@ -117,7 +113,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void bookNowByNameWhenThereIsOneAvailableClassroom(){
-        Classroom classroom1 = mock(Classroom.class);
         when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom1.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet()));
@@ -127,7 +122,6 @@ public class AdvancedBookingSystemTests {
 
     @Test(expected = IllegalArgumentException.class)
     public void throwIAEOnDoubleBooking(){
-        Classroom classroom1 = mock(Classroom.class);
         when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom1.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet()));
@@ -140,8 +134,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void canBookMultipleClassroomsAtTheSameTime(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
         when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom2.getClassroomId()).thenReturn("C2");
         when(classroom2.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
@@ -155,10 +147,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void returnsAllAvailableClassroomsWithProjector(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
-        Classroom classroom3 = mock(Classroom.class);
-
         when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, false);
                 put(Equipment.WI_FI, true);
@@ -194,9 +182,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void returnsAllAvailableClassroomsWithProjectorAndWiFi(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
-
         when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, false);
                 put(Equipment.WI_FI, true);
@@ -224,9 +209,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void returnsAllAvailableClassroomsWithNoRequirementsForEquipment(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
-
         when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, false);
                 put(Equipment.WI_FI, true);
@@ -253,9 +235,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void returnsAllAvailableClassroomsWithCapacityEqualOrAbove(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
-
         when(classroom1.getCapacity()).thenReturn(19);
         when(classroom1.getClassroomId()).thenReturn("C1");
 
@@ -288,10 +267,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void returnsAllAvailableClassroomsWithProjectorAndCapacityEqualOrAbove(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
-        Classroom classroom3 = mock(Classroom.class);
-
         when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, true);
                 put(Equipment.WI_FI, true);
@@ -327,9 +302,6 @@ public class AdvancedBookingSystemTests {
 
     @Test(expected = IllegalArgumentException.class)
     public void throwsIAEOnNullEquipmentList(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
-
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
                 .collect(Collectors.toSet()));
 
@@ -338,8 +310,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void bookClassroomWithCapacityEqualOrMore(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
         when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, true);
                 put(Equipment.WI_FI, true);
@@ -367,8 +337,6 @@ public class AdvancedBookingSystemTests {
     @Test(expected = IllegalArgumentException.class)
     @Parameters(method = "classroomsCapacityLessThanOne")
     public void bookingWithZeroOrLessCapacityThrowsIAE(int minimumCapacity){
-        Classroom classroom1 = mock(Classroom.class);
-
         new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet())).book(minimumCapacity, Collections.emptyList());
     }
 
@@ -379,8 +347,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void bookClassroomWithProjector(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
         when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
             put(Equipment.PROJECTOR, true);
             put(Equipment.WI_FI, true);
@@ -408,8 +374,6 @@ public class AdvancedBookingSystemTests {
 
     @Test(expected = IllegalArgumentException.class)
     public void throwsIAEOnDoubleBookingWhenOnlyOneAvailableClassroomWithSpecificCapacityAndProjector(){
-        Classroom classroom1 = mock(Classroom.class);
-        Classroom classroom2 = mock(Classroom.class);
         when(classroom1.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
             put(Equipment.PROJECTOR, false);
             put(Equipment.WI_FI, true);
