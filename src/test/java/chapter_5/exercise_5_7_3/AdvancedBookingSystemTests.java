@@ -3,6 +3,7 @@ package chapter_5.exercise_5_7_3;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -19,9 +20,20 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnitParamsRunner.class)
 public class AdvancedBookingSystemTests {
 
-    private Classroom classroom1 = mock(Classroom.class);
-    private Classroom classroom2 = mock(Classroom.class);
-    private Classroom classroom3 = mock(Classroom.class);
+    private Classroom classroom1;
+    private Classroom classroom2;
+    private Classroom classroom3;
+
+    @Before
+    public void setUp(){
+        classroom1 = mock(Classroom.class);
+        classroom2 = mock(Classroom.class);
+        classroom3 = mock(Classroom.class);
+
+        when(classroom1.getClassroomId()).thenReturn("C1");
+        when(classroom2.getClassroomId()).thenReturn("C2");
+        when(classroom3.getClassroomId()).thenReturn("C3");
+    }
 
     @Test
     public void returnNoExistingClassroomsWhenClassroomListEmpty(){
@@ -48,8 +60,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void returnExistingClassroomWhenThereIsClassroomInList(){
-        Classroom classroom1 = mock(Classroom.class);
-        when(classroom1.getClassroomId()).thenReturn("C1");
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet()));
 
         Assert.assertEquals(1, bookingSystem.getExistingClassrooms().size());
@@ -58,8 +68,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void returnExistingClassroomsWhenThereAreClassroomsInList(){
-        when(classroom1.getClassroomId()).thenReturn("C1");
-        when(classroom2.getClassroomId()).thenReturn("C2");
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2).collect(Collectors.toSet()));
 
         Assert.assertEquals(2, bookingSystem.getExistingClassrooms().size());
@@ -69,8 +77,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void listsAvailableNowClassroomWhenOneInListAndAvailable(){
-        when(classroom1.getClassroomId()).thenReturn("C1");
-
         AdvancedBookingSystem advancedBookingSystem = new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet()));
         List<Classroom> allAvailableClassrooms = advancedBookingSystem.getAllAvailableClassrooms(DayOfWeekHour.now());
 
@@ -80,7 +86,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void listsNoAvailableNowClassroomsWhenOneInListAndBooked(){
-        when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom1.getBookedDateTimeList()).thenReturn(Collections.singletonList(DayOfWeekHour.now()));
 
         AdvancedBookingSystem advancedBookingSystem = new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet()));
@@ -113,7 +118,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void bookNowByNameWhenThereIsOneAvailableClassroom(){
-        when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom1.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet()));
 
@@ -122,7 +126,6 @@ public class AdvancedBookingSystemTests {
 
     @Test(expected = IllegalArgumentException.class)
     public void throwIAEOnDoubleBooking(){
-        when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom1.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1).collect(Collectors.toSet()));
 
@@ -134,8 +137,6 @@ public class AdvancedBookingSystemTests {
 
     @Test
     public void canBookMultipleClassroomsAtTheSameTime(){
-        when(classroom1.getClassroomId()).thenReturn("C1");
-        when(classroom2.getClassroomId()).thenReturn("C2");
         when(classroom2.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
         when(classroom1.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
@@ -153,7 +154,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom1.getCapacity()).thenReturn(25);
-        when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, true);
@@ -161,7 +161,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom2.getCapacity()).thenReturn(25);
-        when(classroom2.getClassroomId()).thenReturn("C2");
 
         when(classroom3.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, true);
@@ -169,7 +168,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom3.getCapacity()).thenReturn(19);
-        when(classroom3.getClassroomId()).thenReturn("C3");
 
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
                 .collect(Collectors.toSet()));
@@ -188,7 +186,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom1.getCapacity()).thenReturn(25);
-        when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, true);
@@ -196,7 +193,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom2.getCapacity()).thenReturn(25);
-        when(classroom2.getClassroomId()).thenReturn("C2");
 
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
                 .collect(Collectors.toSet()));
@@ -215,7 +211,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom1.getCapacity()).thenReturn(25);
-        when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, true);
@@ -223,7 +218,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom2.getCapacity()).thenReturn(25);
-        when(classroom2.getClassroomId()).thenReturn("C2");
 
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
                 .collect(Collectors.toSet()));
@@ -236,10 +230,8 @@ public class AdvancedBookingSystemTests {
     @Test
     public void returnsAllAvailableClassroomsWithCapacityEqualOrAbove(){
         when(classroom1.getCapacity()).thenReturn(19);
-        when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getCapacity()).thenReturn(20);
-        when(classroom2.getClassroomId()).thenReturn("C2");
 
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
                 .collect(Collectors.toSet()));
@@ -273,7 +265,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom1.getCapacity()).thenReturn(19);
-        when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
                 put(Equipment.PROJECTOR, true);
@@ -281,7 +272,6 @@ public class AdvancedBookingSystemTests {
             }
         });
         when(classroom2.getCapacity()).thenReturn(20);
-        when(classroom2.getClassroomId()).thenReturn("C2");
 
         when(classroom3.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
             put(Equipment.PROJECTOR, false);
@@ -289,7 +279,6 @@ public class AdvancedBookingSystemTests {
         }
         });
         when(classroom3.getCapacity()).thenReturn(20);
-        when(classroom3.getClassroomId()).thenReturn("C3");
 
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2)
                 .collect(Collectors.toSet()));
@@ -353,7 +342,6 @@ public class AdvancedBookingSystemTests {
         }
         });
         when(classroom1.getCapacity()).thenReturn(20);
-        when(classroom1.getClassroomId()).thenReturn("C1");
         when(classroom1.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
@@ -362,7 +350,6 @@ public class AdvancedBookingSystemTests {
         }
         });
         when(classroom2.getCapacity()).thenReturn(20);
-        when(classroom2.getClassroomId()).thenReturn("C2");
         when(classroom2.isDayOfWeekTimeAvailable(DayOfWeekHour.now())).thenReturn(true);
 
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2).collect(Collectors.toSet()));
@@ -380,7 +367,6 @@ public class AdvancedBookingSystemTests {
         }
         });
         when(classroom1.getCapacity()).thenReturn(20);
-        when(classroom1.getClassroomId()).thenReturn("C1");
 
         when(classroom2.getEquipmentAvailability()).thenReturn(new HashMap<Equipment, Boolean>(){{
             put(Equipment.PROJECTOR, true);
@@ -388,7 +374,6 @@ public class AdvancedBookingSystemTests {
         }
         });
         when(classroom2.getCapacity()).thenReturn(20);
-        when(classroom2.getClassroomId()).thenReturn("C2");
 
         AdvancedBookingSystem bookingSystem = new AdvancedBookingSystem(Stream.of(classroom1, classroom2).collect(Collectors.toSet()));
         bookingSystem.book(20, Collections.singletonList(Equipment.PROJECTOR));
