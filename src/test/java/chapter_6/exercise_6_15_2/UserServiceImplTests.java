@@ -38,7 +38,7 @@ public class UserServiceImplTests {
     }
 
     @Test
-    public void shouldNotProceedFurtherSecurityServiceThrowsException() throws Exception {
+    public void shouldNotProceedFurtherWhenSecurityServiceThrowsException() throws Exception {
         when(user.getPassword()).thenAnswer(i -> anyString());
         when(securityService.md5(anyString())).thenThrow(Exception.class);
 
@@ -58,7 +58,6 @@ public class UserServiceImplTests {
         catchException(() -> userService.assignPassword(user));
 
         assertNotNull("Should have thrown exception of type Exception on calling setPassword", caughtException());
-
         verify(user).getPassword();
         verify(securityService).md5(anyString());
         verify(user).setPassword(anyString());
