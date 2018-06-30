@@ -1,6 +1,5 @@
 package chapter_6.exercise_6_15_6;
 
-import chapter_6.package_6_15_6.OperatingSystem;
 import org.junit.Test;
 
 import static chapter_6.exercise_6_15_6.OperatingSystemAssert.assertThat;

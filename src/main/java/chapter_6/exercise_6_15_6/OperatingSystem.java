@@ -1,4 +1,4 @@
-package chapter_6.package_6_15_6;
+package chapter_6.exercise_6_15_6;
 
 public class OperatingSystem {
 
