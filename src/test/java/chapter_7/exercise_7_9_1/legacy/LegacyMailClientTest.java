@@ -1,8 +1,6 @@
 package chapter_7.exercise_7_9_1.legacy;
 
 import chapter_7.exercise_7_9_1.Email;
-import chapter_7.exercise_7_9_1.legacy.LegacyEmailServer;
-import chapter_7.exercise_7_9_1.legacy.LegacyMailClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;

@@ -1,8 +1,6 @@
 package chapter_7.exercise_7_9_1.refactored;
 
 import chapter_7.exercise_7_9_1.Email;
-import chapter_7.exercise_7_9_1.refactored.RefactoredEmailServer;
-import chapter_7.exercise_7_9_1.refactored.RefactoredMailClient;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
