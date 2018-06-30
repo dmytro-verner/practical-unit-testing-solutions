@@ -1,8 +1,6 @@
-package exercise_10_7_1.legacy;
+package chapter_10.exercise_10_7_1.legacy;
 
 import chapter_10.exercise_10_7_1.*;
-import chapter_10.exercise_10_7_1.legacy.Car;
-import chapter_10.exercise_10_7_1.legacy.CarSearch;
 import org.junit.Test;
 
 import java.util.List;

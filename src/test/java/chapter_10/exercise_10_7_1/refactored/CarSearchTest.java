@@ -1,7 +1,5 @@
-package exercise_10_7_1.refactored;
+package chapter_10.exercise_10_7_1.refactored;
 
-import chapter_10.exercise_10_7_1.refactored.Car;
-import chapter_10.exercise_10_7_1.refactored.CarSearch;
 import org.junit.Test;
 
 import java.util.List;
